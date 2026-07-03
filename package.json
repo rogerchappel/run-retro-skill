@@ -1,0 +1,26 @@
+{
+  "name": "run-retro-skill",
+  "version": "0.1.0",
+  "description": "Summarize agent run logs into decisions, evidence, risks, and next actions.",
+  "type": "module",
+  "bin": {
+    "run-retro-skill": "bin/run-retro-skill.js"
+  },
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "scripts": {
+    "test": "node --test",
+    "check": "node scripts/check.js",
+    "build": "node scripts/build.js",
+    "smoke": "node bin/run-retro-skill.js --fixture fixtures/run-log.json"
+  },
+  "keywords": [
+    "agent-skill",
+    "run-audit",
+    "retrospective",
+    "handoff"
+  ],
+  "author": "Roger Chappel",
+  "license": "MIT"
+}
