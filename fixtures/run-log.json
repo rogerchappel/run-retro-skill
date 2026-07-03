@@ -1,0 +1,28 @@
+{
+  "objective": "Build a release candidate for an agent skill package",
+  "outcome": "incubate",
+  "events": [
+    {
+      "time": "10:00",
+      "type": "decision",
+      "message": "Selected a local-first CLI package."
+    },
+    {
+      "time": "10:20",
+      "type": "verification",
+      "command": "npm test",
+      "status": "passed",
+      "message": "All fixture tests passed."
+    },
+    {
+      "time": "10:25",
+      "type": "risk",
+      "message": "PR needs maintainer review before release."
+    },
+    {
+      "time": "10:30",
+      "type": "next",
+      "message": "Review README examples and branch protection."
+    }
+  ]
+}
