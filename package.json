@@ -13,7 +13,10 @@
     "test": "node --test",
     "check": "node scripts/check.js",
     "build": "node scripts/build.js",
-    "smoke": "node bin/run-retro-skill.js --fixture fixtures/run-log.json"
+    "smoke": "node bin/run-retro-skill.js --fixture fixtures/run-log.json",
+    "lint": "npm run check",
+    "package:smoke": "npm pack --dry-run",
+    "release:check": "npm run check && npm run test && npm run smoke && npm run package:smoke"
   },
   "keywords": [
     "agent-skill",
@@ -22,5 +25,20 @@
     "handoff"
   ],
   "author": "Roger Chappel",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogerchappel/run-retro-skill.git"
+  },
+  "files": [
+    "bin",
+    "src",
+    "docs",
+    "fixtures",
+    "examples",
+    "scripts",
+    "SKILL.md",
+    "README.md",
+    "LICENSE"
+  ]
 }
