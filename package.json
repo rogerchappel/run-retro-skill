@@ -15,7 +15,7 @@
     "build": "node scripts/build.js",
     "smoke": "node bin/run-retro-skill.js --fixture fixtures/run-log.json",
     "lint": "npm run check",
-    "package:smoke": "npm pack --dry-run",
+    "package:smoke": "node scripts/package-smoke.js",
     "release:check": "npm run check && npm run test && npm run smoke && npm run package:smoke"
   },
   "keywords": [
@@ -30,6 +30,10 @@
     "type": "git",
     "url": "git+https://github.com/rogerchappel/run-retro-skill.git"
   },
+  "bugs": {
+    "url": "https://github.com/rogerchappel/run-retro-skill/issues"
+  },
+  "homepage": "https://github.com/rogerchappel/run-retro-skill#readme",
   "files": [
     "bin",
     "src",
