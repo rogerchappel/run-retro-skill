@@ -31,3 +31,15 @@ The tool is read-only. Treat any external write, publish, approval, install, or 
 ## Release Candidate
 
 See `docs/RELEASE_CANDIDATE.md` and `docs/RELEASE_CHECKLIST.md` for the current readiness notes.
+
+## Release Verification
+
+Run the full release gate before opening a release-facing pull request:
+
+```sh
+npm run release:check
+```
+
+The gate runs static checks, the Node test suite, the fixture-backed CLI smoke,
+and a structured package smoke that verifies the tarball includes the CLI,
+library, fixture, example report, safety docs, and release checklist.
