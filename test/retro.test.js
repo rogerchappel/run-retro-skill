@@ -18,3 +18,8 @@ test('keeps blocked failures as risks', () => {
 test('redacts obvious tokens', () => {
   assert.equal(redact('token=abc123'), '[REDACTED]');
 });
+test('redacts modern GitHub and npm tokens', () => {
+  const githubToken = 'github_pat_' + 'A'.repeat(82);
+  const npmToken = 'npm_' + 'B'.repeat(36);
+  assert.equal(redact(`github: ${githubToken}, npm: ${npmToken}`), 'github: [REDACTED], npm: [REDACTED]');
+});

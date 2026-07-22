@@ -1,4 +1,10 @@
-const SECRET_PATTERNS = [/gho_[A-Za-z0-9_]+/g, /sk-[A-Za-z0-9_]+/g, /(password|token)=\S+/gi];
+const SECRET_PATTERNS = [
+  /gho_[A-Za-z0-9_]+/g,
+  /\bgithub_pat_[A-Za-z0-9_]{19,}\b/g,
+  /\bnpm_[A-Za-z0-9]{36}\b/g,
+  /sk-[A-Za-z0-9_]+/g,
+  /(password|token)=\S+/gi
+];
 export function createRunRetro(input) {
   const events = (Array.isArray(input.events) ? input.events : []).map(redactEvent);
   const groups = { decisions: [], evidence: [], risks: [], nextActions: [], timeline: [] };
