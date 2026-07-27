@@ -6,7 +6,11 @@ const SECRET_PATTERNS = [
   /(password|token)=\S+/gi
 ];
 export function createRunRetro(input) {
-  const events = (Array.isArray(input.events) ? input.events : []).map(redactEvent);
+  if (!isRecord(input)) throw new TypeError('Run retro input must be an object.');
+  const events = (Array.isArray(input.events) ? input.events : []).map((event, index) => {
+    if (!isRecord(event)) throw new TypeError(`Run retro event at index ${index} must be an object.`);
+    return redactEvent(event);
+  });
   const groups = { decisions: [], evidence: [], risks: [], nextActions: [], timeline: [] };
   for (const event of events) {
     groups.timeline.push(`${event.time ?? 'unknown'} ${event.type ?? 'event'}: ${event.message ?? ''}`);
@@ -16,10 +20,11 @@ export function createRunRetro(input) {
     if (event.type === 'next') groups.nextActions.push(event.message);
   }
   if (!groups.evidence.length) groups.risks.push('No verification evidence was recorded.');
-  return { objective: redact(input.objective ?? 'unspecified'), outcome: input.outcome ?? inferOutcome(groups), ...groups };
+  return { objective: redact(input.objective ?? 'unspecified'), outcome: redact(input.outcome ?? inferOutcome(groups)), ...groups };
 }
 function inferOutcome(groups) { return groups.risks.length ? 'needs-follow-up' : 'ready'; }
 function redactEvent(event) { return Object.fromEntries(Object.entries(event).map(([k, v]) => [k, typeof v === 'string' ? redact(v) : v])); }
+function isRecord(value) { return value !== null && typeof value === 'object' && !Array.isArray(value); }
 export function redact(text) { return SECRET_PATTERNS.reduce((value, pattern) => value.replace(pattern, '[REDACTED]'), String(text)); }
 export function formatRetroReport(retro) {
   return ['# Run Retro', `Objective: ${retro.objective}`, `Outcome: ${retro.outcome}`, 'Decisions:', ...list(retro.decisions), 'Evidence:', ...list(retro.evidence), 'Risks:', ...list(retro.risks), 'Next actions:', ...list(retro.nextActions)].join('\n');
