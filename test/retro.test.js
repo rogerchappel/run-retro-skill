@@ -23,3 +23,19 @@ test('redacts modern GitHub and npm tokens', () => {
   const npmToken = 'npm_' + 'B'.repeat(36);
   assert.equal(redact(`github: ${githubToken}, npm: ${npmToken}`), 'github: [REDACTED], npm: [REDACTED]');
 });
+test('redacts the supplied outcome', () => {
+  const retro = createRunRetro({ outcome: 'token=abc123', events: [] });
+  assert.equal(retro.outcome, '[REDACTED]');
+});
+test('rejects a non-object input with a deterministic error', () => {
+  assert.throws(() => createRunRetro(null), {
+    name: 'TypeError',
+    message: 'Run retro input must be an object.'
+  });
+});
+test('rejects invalid event entries with their index', () => {
+  assert.throws(() => createRunRetro({ events: [null] }), {
+    name: 'TypeError',
+    message: 'Run retro event at index 0 must be an object.'
+  });
+});
