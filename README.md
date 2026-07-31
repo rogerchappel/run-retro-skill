@@ -20,14 +20,27 @@ node bin/run-retro-skill.js --fixture fixtures/run-log.json
 
 Import from `src/index.js` or package exports once installed. The API is local-first and deterministic for fixture-driven review.
 
-`createRunRetro(input)` requires a non-array object. When `events` is present
-and is an array, every entry must also be a non-array object; invalid entries
-produce a `TypeError` that identifies the entry index. User-controlled string
-fields, including `objective`, `outcome`, and event strings, are redacted before
+`createRunRetro(input)` requires a non-array object. `events` is optional, but
+when present it must be an array of objects with one of these shapes:
+
+- `{ "type": "decision", "message": "..." }`
+- `{ "type": "risk", "message": "..." }`
+- `{ "type": "next", "message": "..." }`
+- `{ "type": "verification", "status": "passed", "command": "..." }`
+
+Decision, risk, and next-action messages must contain non-whitespace text. A
+verification requires a non-empty `status` plus at least one non-empty
+`command` or `message`. Only the exact status `passed` is successful; any other
+status records a risk, so missing, incomplete, or unknown evidence cannot
+produce a `ready` outcome. Unknown event types and malformed fields produce a
+`TypeError` that identifies the entry index. Optional `time`, `objective`, and
+`outcome` fields may be strings. User-controlled strings are redacted before
 the report is returned.
 
-The CLI exits with status 1 and a concise `Unable to create run retro: ...`
-message when a fixture cannot be read, parsed, or validated.
+The CLI accepts exactly `--fixture <file>`. It exits with status 2 and prints
+usage for missing, unknown, or extra arguments. It exits with status 1 and a
+concise `Unable to create run retro: ...` message when a fixture cannot be
+read, parsed, or validated.
 
 ## Limitations
 
