@@ -63,5 +63,6 @@ npm run release:check
 ```
 
 The gate runs static checks, the Node test suite, the fixture-backed CLI smoke,
-and a structured package smoke that verifies the tarball includes the CLI,
-library, fixture, example report, safety docs, and release checklist.
+and a structured package smoke. CI starts with `npm ci` for clean, reproducible
+install coverage; the package smoke verifies the tarball contents, installs it
+in an isolated temporary project, and executes the packed CLI against a fixture.
