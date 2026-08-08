@@ -45,6 +45,47 @@ test('rejects an events value that is not an array', () => {
     message: 'Run retro events must be an array.'
   });
 });
+test('rejects non-string objective and outcome fields', () => {
+  for (const [field, value] of [['objective', { name: 'build' }], ['outcome', ['ready']]]) {
+    assert.throws(() => createRunRetro({ [field]: value }), {
+      name: 'TypeError',
+      message: `Run retro ${field} must be a string.`
+    });
+  }
+});
+test('rejects non-string event times with their index', () => {
+  assert.throws(() => createRunRetro({ events: [
+    { type: 'decision', message: 'Keep this event valid' },
+    { type: 'next', message: 'Ship it', time: { day: 1 } }
+  ] }), {
+    name: 'TypeError',
+    message: 'Run retro event at index 1 time must be a string.'
+  });
+});
+test('preserves deterministic redaction and report output for valid optional strings', () => {
+  const retro = createRunRetro({
+    objective: 'Review token=objective-secret',
+    outcome: 'token=outcome-secret',
+    events: [{ type: 'decision', message: 'Ship token=message-secret', time: '2026-08-08T14:00:00Z' }]
+  });
+
+  assert.equal(retro.objective, 'Review [REDACTED]');
+  assert.equal(retro.outcome, '[REDACTED]');
+  assert.deepEqual(retro.timeline, ['2026-08-08T14:00:00Z decision: Ship [REDACTED]']);
+  assert.equal(formatRetroReport(retro), [
+    '# Run Retro',
+    'Objective: Review [REDACTED]',
+    'Outcome: [REDACTED]',
+    'Decisions:',
+    '- Ship [REDACTED]',
+    'Evidence:',
+    '- none',
+    'Risks:',
+    '- No verification evidence was recorded.',
+    'Next actions:',
+    '- none'
+  ].join('\n'));
+});
 test('rejects unknown event types', () => {
   assert.throws(() => createRunRetro({ events: [{ type: 'note', message: 'Remember this' }] }), {
     name: 'TypeError',
