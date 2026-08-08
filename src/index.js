@@ -10,6 +10,8 @@ const EVENT_TYPES = new Set([...MESSAGE_EVENT_TYPES, 'verification']);
 
 export function createRunRetro(input) {
   if (!isRecord(input)) throw new TypeError('Run retro input must be an object.');
+  validateOptionalString(input.objective, 'Run retro objective must be a string.');
+  validateOptionalString(input.outcome, 'Run retro outcome must be a string.');
   if (input.events !== undefined && !Array.isArray(input.events)) {
     throw new TypeError('Run retro events must be an array.');
   }
@@ -39,6 +41,7 @@ export function createRunRetro(input) {
 }
 function inferOutcome(groups) { return groups.risks.length ? 'needs-follow-up' : 'ready'; }
 function validateEvent(event, index) {
+  validateOptionalString(event.time, `Run retro event at index ${index} time must be a string.`);
   if (!EVENT_TYPES.has(event.type)) {
     throw new TypeError(`Run retro event at index ${index} has unsupported type "${String(event.type)}".`);
   }
@@ -53,6 +56,9 @@ function validateEvent(event, index) {
       throw new TypeError(`Run retro verification event at index ${index} requires a non-empty command or message.`);
     }
   }
+}
+function validateOptionalString(value, message) {
+  if (value !== undefined && typeof value !== 'string') throw new TypeError(message);
 }
 function nonEmpty(value) { return typeof value === 'string' && value.trim().length > 0; }
 function redactEvent(event) { return Object.fromEntries(Object.entries(event).map(([k, v]) => [k, typeof v === 'string' ? redact(v) : v])); }
