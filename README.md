@@ -33,9 +33,11 @@ verification requires a non-empty `status` plus at least one non-empty
 `command` or `message`. Only the exact status `passed` is successful; any other
 status records a risk, so missing, incomplete, or unknown evidence cannot
 produce a `ready` outcome. Unknown event types and malformed fields produce a
-`TypeError` that identifies the entry index. Optional `time`, `objective`, and
-`outcome` fields may be strings. User-controlled strings are redacted before
-the report is returned.
+`TypeError` that identifies the entry index. Optional `objective` and `outcome`
+fields must be strings when provided. An event's optional `time` field must
+also be a string; malformed event times produce a `TypeError` identifying the
+entry index. User-controlled strings are redacted before the report is
+returned.
 
 The CLI accepts exactly `--fixture <file>`. It exits with status 2 and prints
 usage for missing, unknown, or extra arguments. It exits with status 1 and a

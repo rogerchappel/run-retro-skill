@@ -7,9 +7,11 @@ event is one of `decision`, `risk`, `next`, or `verification`. Decision, risk,
 and next events require a non-empty `message`. Verification events require a
 non-empty `status` and at least one non-empty `command` or `message`; only the
 exact status `passed` counts as successful verification. Unknown statuses add
-a risk and cannot produce a `ready` outcome. Unknown types and malformed input
-are rejected with a concise indexed error, and user-controlled string fields
-are redacted before output.
+a risk and cannot produce a `ready` outcome. Optional `objective` and `outcome`
+fields must be strings when provided, as must an event's optional `time` field.
+Unknown types and malformed input are rejected with concise errors; event
+errors identify the entry index. User-controlled string fields are redacted
+before output.
 
 Invoke the CLI with exactly `--fixture <file>`. Unknown, missing, or extra
 arguments print usage and exit with status 2.
