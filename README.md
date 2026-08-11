@@ -31,8 +31,10 @@ when present it must be an array of objects with one of these shapes:
 Decision, risk, and next-action messages must contain non-whitespace text. A
 verification requires a non-empty `status` plus at least one non-empty
 `command` or `message`. Only the exact status `passed` is successful; any other
-status records a risk, so missing, incomplete, or unknown evidence cannot
-produce a `ready` outcome. Unknown event types and malformed fields produce a
+status records a risk. A caller-supplied `outcome` is preserved only when no
+risks are recorded; otherwise the reported outcome is deterministically
+`needs-follow-up`. This prevents missing, failed, or unknown verification from
+being paired with a success-like outcome. Unknown event types and malformed fields produce a
 `TypeError` that identifies the entry index. Optional `objective` and `outcome`
 fields must be strings when provided. An event's optional `time` field must
 also be a string; malformed event times produce a `TypeError` identifying the
