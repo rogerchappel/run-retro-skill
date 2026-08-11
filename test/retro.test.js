@@ -118,6 +118,33 @@ test('unknown verification evidence cannot produce a ready outcome', () => {
   assert.equal(retro.outcome, 'needs-follow-up');
   assert.deepEqual(retro.risks, ['Verification status is unknown: npm test.']);
 });
+test('failed verification overrides a caller-supplied success-like outcome', () => {
+  const retro = createRunRetro({
+    outcome: 'passed',
+    events: [{ type: 'verification', command: 'npm test', status: 'failed' }]
+  });
+  assert.equal(retro.outcome, 'needs-follow-up');
+  assert.equal(formatRetroReport(retro), [
+    '# Run Retro',
+    'Objective: unspecified',
+    'Outcome: needs-follow-up',
+    'Decisions:',
+    '- none',
+    'Evidence:',
+    '- npm test: failed',
+    'Risks:',
+    '- Verification status is failed: npm test.',
+    'Next actions:',
+    '- none'
+  ].join('\n'));
+});
+test('unknown verification overrides any caller-supplied outcome', () => {
+  const retro = createRunRetro({
+    outcome: 'complete',
+    events: [{ type: 'verification', command: 'npm test', status: 'unknown' }]
+  });
+  assert.equal(retro.outcome, 'needs-follow-up');
+});
 test('formatted reports never contain undefined values', () => {
   const report = formatRetroReport(createRunRetro({ events: [] }));
   assert.doesNotMatch(report, /undefined/);
