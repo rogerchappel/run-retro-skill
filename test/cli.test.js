@@ -48,7 +48,10 @@ test('CLI accepts valid optional strings and keeps report output deterministic',
   writeFileSync(fixture, JSON.stringify({
     objective: 'Ship token=objective-secret',
     outcome: 'token=outcome-secret',
-    events: [{ type: 'decision', message: 'Proceed', time: '2026-08-08T14:00:00Z' }]
+    events: [
+      { type: 'decision', message: 'Proceed', time: '2026-08-08T14:00:00Z' },
+      { type: 'verification', command: 'npm test', status: 'passed' }
+    ]
   }));
 
   const result = spawnSync(process.execPath, ['bin/run-retro-skill.js', '--fixture', fixture], {
@@ -65,9 +68,9 @@ test('CLI accepts valid optional strings and keeps report output deterministic',
     'Decisions:',
     '- Proceed',
     'Evidence:',
-    '- none',
+    '- npm test: passed',
     'Risks:',
-    '- No verification evidence was recorded.',
+    '- none',
     'Next actions:',
     '- none',
     ''

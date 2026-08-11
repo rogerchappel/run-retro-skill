@@ -24,7 +24,10 @@ test('redacts modern GitHub and npm tokens', () => {
   assert.equal(redact(`github: ${githubToken}, npm: ${npmToken}`), 'github: [REDACTED], npm: [REDACTED]');
 });
 test('redacts the supplied outcome', () => {
-  const retro = createRunRetro({ outcome: 'token=abc123', events: [] });
+  const retro = createRunRetro({
+    outcome: 'token=abc123',
+    events: [{ type: 'verification', command: 'npm test', status: 'passed' }]
+  });
   assert.equal(retro.outcome, '[REDACTED]');
 });
 test('rejects a non-object input with a deterministic error', () => {
@@ -66,12 +69,18 @@ test('preserves deterministic redaction and report output for valid optional str
   const retro = createRunRetro({
     objective: 'Review token=objective-secret',
     outcome: 'token=outcome-secret',
-    events: [{ type: 'decision', message: 'Ship token=message-secret', time: '2026-08-08T14:00:00Z' }]
+    events: [
+      { type: 'decision', message: 'Ship token=message-secret', time: '2026-08-08T14:00:00Z' },
+      { type: 'verification', command: 'npm test', status: 'passed' }
+    ]
   });
 
   assert.equal(retro.objective, 'Review [REDACTED]');
   assert.equal(retro.outcome, '[REDACTED]');
-  assert.deepEqual(retro.timeline, ['2026-08-08T14:00:00Z decision: Ship [REDACTED]']);
+  assert.deepEqual(retro.timeline, [
+    '2026-08-08T14:00:00Z decision: Ship [REDACTED]',
+    'unknown verification: '
+  ]);
   assert.equal(formatRetroReport(retro), [
     '# Run Retro',
     'Objective: Review [REDACTED]',
@@ -79,9 +88,9 @@ test('preserves deterministic redaction and report output for valid optional str
     'Decisions:',
     '- Ship [REDACTED]',
     'Evidence:',
-    '- none',
+    '- npm test: passed',
     'Risks:',
-    '- No verification evidence was recorded.',
+    '- none',
     'Next actions:',
     '- none'
   ].join('\n'));

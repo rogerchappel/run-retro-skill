@@ -36,7 +36,7 @@ export function createRunRetro(input) {
   }
   if (!groups.evidence.length) groups.risks.push('No verification evidence was recorded.');
   const requestedOutcome = redact(input.outcome ?? inferOutcome(groups));
-  const outcome = requestedOutcome === 'ready' && groups.risks.length ? inferOutcome(groups) : requestedOutcome;
+  const outcome = groups.risks.length ? inferOutcome(groups) : requestedOutcome;
   return { objective: redact(input.objective ?? 'unspecified'), outcome, ...groups };
 }
 function inferOutcome(groups) { return groups.risks.length ? 'needs-follow-up' : 'ready'; }
