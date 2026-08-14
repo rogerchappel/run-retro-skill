@@ -65,6 +65,18 @@ function redactEvent(event) { return Object.fromEntries(Object.entries(event).ma
 function isRecord(value) { return value !== null && typeof value === 'object' && !Array.isArray(value); }
 export function redact(text) { return SECRET_PATTERNS.reduce((value, pattern) => value.replace(pattern, '[REDACTED]'), String(text)); }
 export function formatRetroReport(retro) {
-  return ['# Run Retro', `Objective: ${retro.objective}`, `Outcome: ${retro.outcome}`, 'Decisions:', ...list(retro.decisions), 'Evidence:', ...list(retro.evidence), 'Risks:', ...list(retro.risks), 'Next actions:', ...list(retro.nextActions)].join('\n');
+  return ['# Run Retro', scalar('Objective', retro.objective), scalar('Outcome', retro.outcome), 'Decisions:', ...list(retro.decisions), 'Evidence:', ...list(retro.evidence), 'Risks:', ...list(retro.risks), 'Next actions:', ...list(retro.nextActions)].join('\n');
 }
-function list(items) { return items.length ? items.map((item) => `- ${item}`) : ['- none']; }
+function scalar(label, value) { return `${label}: ${renderMarkdownText(value)}`; }
+function list(items) { return items.length ? items.map((item) => `- ${renderMarkdownText(item)}`) : ['- none']; }
+function renderMarkdownText(value) {
+  const lines = String(value).split(/\r?\n/);
+  return lines.map((line, index) => {
+    const escaped = line
+      .replace(/([\\`*_[\]{}()#+!<>|])/g, '\\$1')
+      .replace(/\\\[REDACTED\\\]/g, '[REDACTED]')
+      .replace(/^(\s*)(\d+)([.)])(\s)/, '$1$2\\$3$4')
+      .replace(/^(\s*)(-{3,}|[-+]\s)/, (_, space, marker) => `${space}${marker.replace(/[-+]/g, '\\$&')}`);
+    return `${index ? '  ' : ''}${escaped}${index < lines.length - 1 ? '<br>' : ''}`;
+  }).join('\n');
+}

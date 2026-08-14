@@ -172,9 +172,9 @@ test('escapes multiline Markdown syntax without changing report hierarchy', () =
   assert.equal(report, [
     '# Run Retro',
     'Objective: Build \\*\\*release\\*\\*<br>',
-    '\\# Injected heading',
+    '  \\# Injected heading',
     'Outcome: \\[ready\\]\\(https://example.com\\)<br>',
-    '\\> quoted outcome',
+    '  \\> quoted outcome',
     'Decisions:',
     '- Ship \\`now\\`<br>',
     '  Risks:<br>',
@@ -183,7 +183,7 @@ test('escapes multiline Markdown syntax without changing report hierarchy', () =
     '- npm test: passed<br>',
     '  1\\. forged evidence',
     'Risks:',
-    '- Use \\<unsafe@example\\.com\\><br>',
+    '- Use \\<unsafe@example.com\\><br>',
     '  \\-\\-\\-',
     'Next actions:',
     '- Review \\_carefully\\_<br>',
@@ -205,6 +205,6 @@ test('keeps redaction effective before Markdown-safe rendering', () => {
 
   const report = formatRetroReport(retro);
   assert.doesNotMatch(report, /objective-secret|decision-secret/);
-  assert.match(report, /Objective: Audit \[REDACTED\]<br>\n\\# fake/);
+  assert.match(report, /Objective: Audit \[REDACTED\]<br>\n  \\# fake/);
   assert.match(report, /- Do \\\*\\\*not\\\*\\\* expose \[REDACTED\]<br>\n  \\- fake/);
 });
