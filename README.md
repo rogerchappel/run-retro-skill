@@ -41,6 +41,17 @@ also be a string; malformed event times produce a `TypeError` identifying the
 entry index. User-controlled strings are redacted before the report is
 returned.
 
+### Markdown report contract
+
+`formatRetroReport(retro)` always emits one `# Run Retro` heading followed by
+the Objective, Outcome, Decisions, Evidence, Risks, and Next actions sections
+in that order. It treats every scalar and list value as text, not as trusted
+Markdown: Markdown-significant punctuation is escaped, and embedded newlines
+become explicit line breaks with indented continuation lines. Consequently, a
+value cannot introduce another heading, section, or sibling list item. The
+visible text remains readable when rendered as Markdown, and the
+`[REDACTED]` marker is preserved verbatim.
+
 The CLI accepts exactly `--fixture <file>`. It exits with status 2 and prints
 usage for missing, unknown, or extra arguments. It exits with status 1 and a
 concise `Unable to create run retro: ...` message when a fixture cannot be
