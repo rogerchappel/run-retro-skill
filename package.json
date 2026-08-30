@@ -41,6 +41,7 @@
     "fixtures",
     "examples",
     "scripts",
+    "test",
     "SKILL.md",
     "README.md",
     "LICENSE"
