@@ -6,7 +6,7 @@ incubate
 
 ## Verification
 
-npm test: pass (4 tests); npm run check: pass; npm run build: pass; npm run smoke: pass, renders decisions/evidence/risks/next actions.
+`npm run release:check` passes the current test suite, metadata validation, source CLI smoke, and a clean packed-consumer install that runs the shipped CLI and package scripts.
 
 ## Known Gaps
 
