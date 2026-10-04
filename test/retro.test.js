@@ -208,3 +208,9 @@ test('keeps redaction effective before Markdown-safe rendering', () => {
   assert.match(report, /Objective: Audit \[REDACTED\]<br>\n  \\# fake/);
   assert.match(report, /- Do \\\*\\\*not\\\*\\\* expose \[REDACTED\]<br>\n  \\- fake/);
 });
+
+test('redacts colon and JSON key-value secrets while preserving surrounding text', () => {
+  assert.equal(redact('token: abc123'), 'token: [REDACTED]');
+  assert.equal(redact('{"token":"abc123", "password": "p@ss word"}'), '{"token":"[REDACTED]", "password": "[REDACTED]"}');
+  assert.equal(redact('ordinary text stays visible'), 'ordinary text stays visible');
+});

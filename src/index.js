@@ -63,7 +63,12 @@ function validateOptionalString(value, message) {
 function nonEmpty(value) { return typeof value === 'string' && value.trim().length > 0; }
 function redactEvent(event) { return Object.fromEntries(Object.entries(event).map(([k, v]) => [k, typeof v === 'string' ? redact(v) : v])); }
 function isRecord(value) { return value !== null && typeof value === 'object' && !Array.isArray(value); }
-export function redact(text) { return SECRET_PATTERNS.reduce((value, pattern) => value.replace(pattern, '[REDACTED]'), String(text)); }
+export function redact(text) {
+  let value = SECRET_PATTERNS.reduce((result, pattern) => result.replace(pattern, '[REDACTED]'), String(text));
+  value = value.replace(/([\[{,]\s*\"(?:password|token)\"\s*:\s*)\"(?:\\.|[^\"\\])*\"/gi, '$1"[REDACTED]"');
+  value = value.replace(/\b(password|token)(\s*[:=]\s*)\"(?:\\.|[^\"\\])*\"/gi, '$1$2"[REDACTED]"');
+  return value.replace(/\b(password|token)(\s*[:=]\s*)[^\s,;}&]+/gi, '$1$2[REDACTED]');
+}
 export function formatRetroReport(retro) {
   return ['# Run Retro', scalar('Objective', retro.objective), scalar('Outcome', retro.outcome), 'Decisions:', ...list(retro.decisions), 'Evidence:', ...list(retro.evidence), 'Risks:', ...list(retro.risks), 'Next actions:', ...list(retro.nextActions)].join('\n');
 }
